@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="pt-BR" translate="no">
+<head>
+<meta charset="UTF-8">
+<meta name="google" content="notranslate">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gerador de QR Code · Loghus</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+  :root{--azul:#0b3b8c;--azul2:#1565d8;--laranja:#f47a1f;--bg:#eef4fc;--card:#fff;--texto:#1e293b;--suave:#64748b;--linha:#e2e8f0;}
+  *{box-sizing:border-box;}
+  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--texto);}
+  header{background:linear-gradient(120deg,var(--azul) 0%,#1957b6 55%,var(--laranja) 118%);color:#fff;padding:26px 20px;text-align:center;}
+  header h1{margin:0;font-size:1.5rem;}
+  header p{margin:6px 0 0;opacity:.9;font-size:.9rem;}
+  .wrap{max-width:520px;margin:26px auto;padding:0 16px;}
+  .card{background:var(--card);border-radius:14px;padding:22px;box-shadow:0 1px 3px rgba(0,0,0,.08);}
+  label{font-weight:700;font-size:.9rem;display:block;margin-bottom:6px;}
+  input[type=text]{width:100%;padding:11px 12px;border:1px solid var(--linha);border-radius:9px;font-size:.95rem;}
+  button{margin-top:14px;width:100%;border:none;background:var(--laranja);color:#fff;font-weight:700;
+         padding:12px;border-radius:9px;font-size:.95rem;cursor:pointer;}
+  button:hover{filter:brightness(1.05);}
+  button.sec{background:var(--azul2);margin-top:10px;}
+  #saida{margin-top:22px;text-align:center;}
+  #qr{display:inline-block;padding:16px;background:#fff;border:1px solid var(--linha);border-radius:12px;}
+  #qr img,#qr canvas{display:block;}
+  .dica{font-size:.82rem;color:var(--suave);margin-top:14px;line-height:1.5;}
+  .hidden{display:none;}
+</style>
+</head>
+<body>
+<header>
+  <h1>🔗 Gerador de QR Code</h1>
+  <p>Curso Loghus — material de estudo ENEM</p>
+</header>
+<div class="wrap">
+  <div class="card">
+    <label for="url">Cole aqui o link do material (após hospedar)</label>
+    <input type="text" id="url" placeholder="https://seu-nome.netlify.app" autocomplete="off">
+    <button onclick="gerar()">Gerar QR Code</button>
+    <div id="saida" class="hidden">
+      <div id="qr"></div>
+      <button class="sec" onclick="baixar()">⬇️ Baixar QR Code (PNG)</button>
+      <p class="dica">Imprima ou envie aos alunos. Ao escanear com a câmera, eles abrem o material direto no navegador — e podem tocar em <b>Compartilhar → Adicionar à Tela de Início</b> para instalar como app.</p>
+    </div>
+  </div>
+  <p class="dica">💡 Dica: use o link que termina em <b>.netlify.app</b> (Netlify Drop) ou <b>.github.io</b> (GitHub Pages).</p>
+</div>
+<script>
+let qr;
+function gerar(){
+  let u=document.getElementById('url').value.trim();
+  if(!u){alert('Cole o link primeiro.');return;}
+  if(!/^https?:\/\//i.test(u)) u='https://'+u;
+  document.getElementById('qr').innerHTML='';
+  qr=new QRCode(document.getElementById('qr'),{text:u,width:260,height:260,
+     colorDark:'#0b3b8c',colorLight:'#ffffff',correctLevel:QRCode.CorrectLevel.H});
+  document.getElementById('saida').classList.remove('hidden');
+}
+function baixar(){
+  const el=document.querySelector('#qr img')||document.querySelector('#qr canvas');
+  if(!el){alert('Gere o QR primeiro.');return;}
+  let dataUrl;
+  if(el.tagName==='IMG'){dataUrl=el.src;}
+  else{dataUrl=el.toDataURL('image/png');}
+  const a=document.createElement('a');
+  a.href=dataUrl;a.download='qrcode-loghus.png';document.body.appendChild(a);a.click();a.remove();
+}
+document.getElementById('url').addEventListener('keydown',e=>{if(e.key==='Enter')gerar();});
+</script>
+</body>
+</html>
